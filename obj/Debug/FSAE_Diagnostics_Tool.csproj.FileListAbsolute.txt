@@ -1,0 +1,10 @@
+C:\Users\Aidan\source\repos\DiagnosticsGui\bin\Debug\FSAE_Diagnostics_Tool.exe.config
+C:\Users\Aidan\source\repos\DiagnosticsGui\bin\Debug\FSAE_Diagnostics_Tool.exe
+C:\Users\Aidan\source\repos\DiagnosticsGui\bin\Debug\FSAE_Diagnostics_Tool.pdb
+C:\Users\Aidan\source\repos\DiagnosticsGui\obj\Debug\FSAE_Diagnostics_Tool.csprojAssemblyReference.cache
+C:\Users\Aidan\source\repos\DiagnosticsGui\obj\Debug\FSAE_Diagnostics_Tool.Form1.resources
+C:\Users\Aidan\source\repos\DiagnosticsGui\obj\Debug\FSAE_Diagnostics_Tool.Properties.Resources.resources
+C:\Users\Aidan\source\repos\DiagnosticsGui\obj\Debug\FSAE_Diagnostics_Tool.csproj.GenerateResource.cache
+C:\Users\Aidan\source\repos\DiagnosticsGui\obj\Debug\FSAE_Diagnostics_Tool.csproj.CoreCompileInputs.cache
+C:\Users\Aidan\source\repos\DiagnosticsGui\obj\Debug\FSAE_Diagnostics_Tool.exe
+C:\Users\Aidan\source\repos\DiagnosticsGui\obj\Debug\FSAE_Diagnostics_Tool.pdb
