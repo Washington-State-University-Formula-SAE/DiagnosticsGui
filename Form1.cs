@@ -9,11 +9,32 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Collections.Concurrent;
 
 namespace FSAE_Diagnostics_Tool
 {
+
+    public class FixedSizedQueue<T>
+    {
+        ConcurrentQueue<T> q = new ConcurrentQueue<T>();
+        private object lockObject = new object();
+
+        public int Limit { get; set; }
+        public void Enqueue(T obj)
+        {
+            q.Enqueue(obj);
+            lock (lockObject)
+            {
+                T overflow;
+                while (q.Count > Limit && q.TryDequeue(out overflow)) ;
+            }
+        }
+    }
+
     public partial class Form1 : Form
     {
+        static FixedSizedQueue<ushort> circbuf;
+
         public Form1()
         {
             InitializeComponent();
@@ -27,7 +48,12 @@ namespace FSAE_Diagnostics_Tool
             closeButton.Enabled = false;
             serialPort1.DataReceived += new SerialDataReceivedEventHandler(serialPort1_DataReceived); // subscribe to data received event
 
+            serialPort2.RtsEnable = true;
             serialPort2.Open();
+
+            circbuf = new FixedSizedQueue<ushort>();
+            circbuf.Limit = 2;
+
         }
 
         private void openButton_Click(object sender, EventArgs e)
@@ -37,6 +63,7 @@ namespace FSAE_Diagnostics_Tool
             try // try and open the selected port
             {
                 serialPort1.PortName = portComboBox.Text;
+                serialPort1.RtsEnable = true;
                 serialPort1.Open();
             }
             catch (Exception ex)
@@ -60,25 +87,31 @@ namespace FSAE_Diagnostics_Tool
         }
         private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            SerialPort sp = (SerialPort)sender; 
-            string data = sp.ReadExisting();
-            SendData(data.ToString()); // Send data to delegate to write to textbox
-            SplitData(data.ToString()); // Send data to delegate to split along delimiters
+            SerialPort sp = (SerialPort)sender;
+            byte[] dataBuffer;
+            
+            int bytes = sp.BytesToRead; // get number of incoming bytes
+            dataBuffer = new byte[bytes]; // create buffer to hold incoming data
+
+            sp.Read(dataBuffer, 0, bytes);
+
+            SendData(dataBuffer);
         }
 
         delegate void SendDataCallback(string data);
 
-        private void SendData(string data) // Method to put data in textbox
+        private void SendData(byte[] dataBuffer) // Method to put data in textbox
         {
-            if (this.receiveTextBox.InvokeRequired)
+
+            string temp = "";
+            for(int i = 0; i < dataBuffer.Length; i++)
             {
-                SendDataCallback d = new SendDataCallback(SendData);
-                this.Invoke(d, new object[] { data });
+                circbuf.Enqueue(dataBuffer[i]);
+                temp += Convert.ToString((int)dataBuffer[i]) + " ";
             }
-            else
-            {
-                this.receiveTextBox.Text += data;
-            }
+
+            MessageBox.Show(temp);
+
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -120,8 +153,18 @@ namespace FSAE_Diagnostics_Tool
             // TEST BUTTON DELETE ME!
             private void testButton_Click(object sender, EventArgs e)
         {
+            byte[] data = new byte[3];
+            data[0] = 0xFF;
+            data[1] = 0x01;
+            data[2] = 0xFE;
+
             string test = textBox1.Text;
-            serialPort2.WriteLine(test);
+            serialPort2.Write(data, 0, 3);
+        }
+
+        private void receiveTextBox_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

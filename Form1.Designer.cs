@@ -92,14 +92,16 @@
             this.receiveTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.receiveTextBox.Size = new System.Drawing.Size(315, 304);
             this.receiveTextBox.TabIndex = 31;
+            this.receiveTextBox.TextChanged += new System.EventHandler(this.receiveTextBox_TextChanged);
             // 
             // serialPort1
             // 
+            this.serialPort1.PortName = "COM6";
             this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPort1_DataReceived);
             // 
             // serialPort2
             // 
-            this.serialPort2.PortName = "COM2";
+            this.serialPort2.PortName = "COM7";
             // 
             // testButton
             // 
